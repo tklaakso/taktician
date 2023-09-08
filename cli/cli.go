@@ -61,6 +61,51 @@ var UnicodeGlyphs = Glyphs{
 	},
 }
 
+func (c *CLI) PlayPosition(pos *tak.Position) *tak.Position {
+	c.moves = nil
+	c.p = pos
+	for {
+		c.render()
+		if ok, _ := c.p.GameOver(); ok {
+			d := c.p.WinDetails()
+			fmt.Fprintf(c.Out, "Game Over! ")
+			if d.Winner == tak.NoColor {
+				fmt.Fprintf(c.Out, "Draw.")
+			} else {
+				fmt.Fprintf(c.Out, "%s wins by ", d.Winner)
+				switch d.Reason {
+				case tak.RoadWin:
+					fmt.Fprintf(c.Out, "building a road")
+				case tak.FlatsWin:
+					fmt.Fprintf(c.Out, "flats count")
+				}
+			}
+			fmt.Fprintf(c.Out, "\nflats count: white=%d black=%d\n",
+				d.WhiteFlats,
+				d.BlackFlats)
+			return c.p
+		}
+		var m tak.Move
+		if c.p.ToMove() == tak.White {
+			m = c.White.GetMove(c.p)
+		} else {
+			m = c.Black.GetMove(c.p)
+		}
+		p, e := c.p.Move(m)
+		if e != nil {
+			fmt.Fprintln(c.Out, "illegal move:", e)
+		} else {
+			if c.p.ToMove() == tak.White {
+				fmt.Fprintf(c.Out, "%d. %s", c.p.MoveNumber()/2+1, ptn.FormatMove(m))
+			} else {
+				fmt.Fprintf(c.Out, "%d. ... %s", c.p.MoveNumber()/2+1, ptn.FormatMove(m))
+			}
+			c.p = p
+			c.moves = append(c.moves, m)
+		}
+	}
+}
+
 func (c *CLI) Play() *tak.Position {
 	c.moves = nil
 	c.p = tak.New(c.Config)

@@ -15,6 +15,7 @@ import (
 	"github.com/nelhage/taktician/cmd/internal/importptn"
 	"github.com/nelhage/taktician/cmd/internal/openings"
 	"github.com/nelhage/taktician/cmd/internal/play"
+	"github.com/nelhage/taktician/cmd/internal/playboard"
 	"github.com/nelhage/taktician/cmd/internal/playtak"
 	"github.com/nelhage/taktician/cmd/internal/selfplay"
 	"github.com/nelhage/taktician/cmd/internal/serve"
@@ -31,6 +32,7 @@ func innerMain() int {
 	subcommands.Register(&playtak.Command{}, "")
 	subcommands.Register(&serve.Command{}, "")
 	subcommands.Register(&play.Command{}, "")
+	subcommands.Register(&playboard.Command{}, "")
 	subcommands.Register(&tei.Command{}, "")
 
 	subcommands.Register(&genopenings.Command{}, "")
